@@ -1,0 +1,38 @@
+.todosContainer {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 70%;
+    margin: 0 auto;
+    column-gap: 5px;
+    row-gap: 5px;
+}
+
+.todosContainer > div {
+    border: 2px solid cornflowerblue;
+}
+
+.formContainer {
+    height: 10rem;
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(70,32,144,1) 0%, rgba(82,9,121,1) 56%, rgba(158,0,255,1) 100%);
+}
+
+.formContainer > form > input {
+    border: none;
+    border-bottom: 2px solid black;
+    height: 25px;
+}
+
+.formContainer > form {
+    width: 50%;
+    margin: 0 auto;
+    line-height: 10rem;
+}
+
+.formContainer > form > label {
+    color: white;
+    margin-left: 20px;
+}
+
+.unfinished {
+    color: red;
+}
