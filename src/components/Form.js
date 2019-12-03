@@ -42,8 +42,7 @@ class Form extends Component {
         return (
             <div className="formContainer">
                 <form onSubmit={this.handleSubmit}>
-                    <label>Todo: </label>
-                    <input value={this.state.todo} name="todo" onChange={this.handleChange} />
+                    <input value={this.state.todo} name="todo" onChange={this.handleChange} placeholder="FILL IN YOUR TODO" />
                 </form>
             </div>
         )

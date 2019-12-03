@@ -41,12 +41,16 @@ export default class Todo extends Component {
         this.toggleEdit();
     }
 
+    finish(){
+        this.props.finish(this.props.id, this.state.task, this.state.isCompleted);
+    }
+
     handleCheckBox(){
         this.setState({
             isCompleted: !this.state.isCompleted
         })
 
-        console.log(this.state.isCompleted);
+        this.finish();
     }
 
 
@@ -62,12 +66,18 @@ export default class Todo extends Component {
         
         if(!this.state.isEditing){
             mostrar = (
-                <div>
-                    <h1> Task: </h1>
-                    <div className={isFinished}>{this.props.task}</div>
-                    <button onClick={this.toggleEdit}>Edit</button>
-                    <button onClick={this.remove}>Borrar</button>
-                    <input type="checkbox" onChange={this.handleCheckBox} />              
+                <div className="todoCont">
+                    <div className="containerDiv">
+                        <div className={isFinished}><h3>{this.props.task}</h3></div>
+                        <button className="editBtn" onClick={this.toggleEdit}>Edit</button>
+                        <button className="deleteBtn" onClick={this.remove}>Borrar</button>
+                    </div>
+                    <div id="checkCont">
+                        <label className="container">
+                            <div id="checkCont"><input type="checkbox" id="checkbox" onChange={this.handleCheckBox} /> </div>
+                            <span className="checkmark"></span>
+                        </label> 
+                    </div>       
                 </div>
             )
         } else {

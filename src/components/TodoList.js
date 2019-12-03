@@ -3,7 +3,14 @@ import Form from './Form';
 import Todo from './Todo';
 import uuid from 'uuid';
 import '../css/style.css';
+const { app, remote } = window.require('electron').remote;
+
+
+
+
 const fs = window.require('fs');
+
+
 
 
 class TodoList extends Component {
@@ -17,6 +24,7 @@ class TodoList extends Component {
         this.delete = this.delete.bind(this);
         this.readFile = this.readFile.bind(this);
         this.update = this.update.bind(this);
+        this.finishTodo = this.finishTodo.bind(this);
     }
 /*
    componentWillMount(){
@@ -36,7 +44,7 @@ class TodoList extends Component {
             todos: [...this.state.todos, newTodo]
         }) */
         
-        fs.appendFile("./src/todos/todos.txt", newTodo + ";" + uuid() +"\n", function(err) {
+        fs.appendFile("./src/todos/todos.txt", newTodo + ";" + uuid() + ";false" +"\n", function(err) {
             if(err) {
                 return console.log(err);
             }
@@ -51,7 +59,8 @@ class TodoList extends Component {
             for(let i = 0; i < array.length - 1; i++){
                 let line = array[i];
                 let task = line.substring(0, line.indexOf(";"));
-                let id = line.substring(line.indexOf(";") + 1, line.length);
+                let id = line.substring(line.indexOf(";") + 1, line.lastIndexOf(";"));
+                let completed = line.substring(line.lastIndexOf(";") + 1, line.length)
                 taskAndId.push({
                     task: task,
                     id: id
@@ -74,6 +83,7 @@ class TodoList extends Component {
                 let line = array[i];
                 let task = line.substring(0, line.indexOf(";"));
                 let id = line.substring(line.indexOf(";") + 1, line.length);
+
                 taskAndId.push({
                     task: task,
                     id: id
@@ -116,6 +126,64 @@ class TodoList extends Component {
 
         })
 
+    }
+
+    finishTodo(id, task, completed){
+        if(!completed){
+            let currentComponent = this;
+            fs.readFile('./src/todos/todos.txt', {encoding: 'utf-8'}, function(err, data) {
+                if (err) throw err;
+                let dataArray = data.split('\n'); // convert file data in an array
+                const searchKeyword = id; // we are looking for a line, contains, key word 'user1' in the file
+                let lastIndex = -1; // let say, we have not found the keyword
+            
+                for (let index=0; index<dataArray.length; index++) {
+                    if (dataArray[index].includes(searchKeyword)) { // check if a line contains the 'user1' keyword
+                    let deleteCompleted = dataArray[index].substring(0, dataArray[index].lastIndexOf(";"));
+                    dataArray[index] = deleteCompleted + ";true";
+                        break; 
+                    }
+                }
+              
+            // UPDATE FILE WITH NEW DATA
+            // IN CASE YOU WANT TO UPDATE THE CONTENT IN YOUR FILE
+            // THIS WILL REMOVE THE LINE CONTAINS 'user1' IN YOUR shuffle.txt FILE
+            const updatedData = dataArray.join('\n');
+                fs.writeFile('./src/todos/todos.txt', updatedData, (err) => {
+                    if (err) throw err;
+                    console.log ('Successfully updated the file data');
+                    currentComponent.readFile();
+                });
+    
+            })
+        } else {
+            let currentComponent = this;
+            fs.readFile('./src/todos/todos.txt', {encoding: 'utf-8'}, function(err, data) {
+                if (err) throw err;
+                let dataArray = data.split('\n'); // convert file data in an array
+                const searchKeyword = id; // we are looking for a line, contains, key word 'user1' in the file
+                let lastIndex = -1; // let say, we have not found the keyword
+            
+                for (let index=0; index<dataArray.length; index++) {
+                    if (dataArray[index].includes(searchKeyword)) { // check if a line contains the 'user1' keyword
+                        let deleteCompleted = dataArray[index].substring(0, dataArray[index].lastIndexOf(";"));
+                        dataArray[index] = deleteCompleted + ";false";
+                        break; 
+                    }
+                }
+              
+            // UPDATE FILE WITH NEW DATA
+            // IN CASE YOU WANT TO UPDATE THE CONTENT IN YOUR FILE
+            // THIS WILL REMOVE THE LINE CONTAINS 'user1' IN YOUR shuffle.txt FILE
+            const updatedData = dataArray.join('\n');
+                fs.writeFile('./src/todos/todos.txt', updatedData, (err) => {
+                    if (err) throw err;
+                    console.log ('Successfully updated the file data');
+                    currentComponent.readFile();
+                });
+    
+            })
+        }
     }
 
     delete(id){
@@ -183,10 +251,15 @@ class TodoList extends Component {
                      id={todo.id}
                      delete={this.delete}
                      update={this.update}
+                     finish={this.finishTodo}
                     />
         })
         return(
             <div>
+                <span className="close" onClick={() => {
+                    app.quit()}}>X</span>
+                <div className="titlebar"><div>TODO APP</div></div>
+
                 <Form  
                     createTodo={this.create}
                 />
